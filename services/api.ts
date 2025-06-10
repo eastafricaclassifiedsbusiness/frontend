@@ -35,6 +35,15 @@ api.interceptors.response.use(
       console.error('API Error Response:', error.response.data);
       
       // Handle specific error cases
+      if (error.response.status === 401) {
+        // Clear token and redirect to login if unauthorized
+        localStorage.removeItem('token');
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
+        return Promise.reject({ msg: 'Session expired. Please login again.' });
+      }
+      
       if (error.response.status === 500) {
         return Promise.reject({ msg: 'Server error. Please try again later.' });
       }
